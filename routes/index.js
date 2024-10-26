@@ -8,8 +8,8 @@ router.get("/cafes", function (req, res, next) {
 
   const locationQuery = req.query.location;
 
-  db.get("SELECT * FROM cafe", locationQuery, (err, row) => {
-    res.json({ testing: "wow", location: locationQuery });
+  db.all("SELECT * FROM cafe", locationQuery, (err, row) => {
+    res.json(row);
   });
 });
 
@@ -19,7 +19,7 @@ router.get("/employees", function (req, res, next) {
 
   const cafeQuery = req.query.cafe;
 
-  db.get("SELECT * FROM employee", locationQuery, (err, row) => {
+  db.all("SELECT * FROM employee", cafeQuery, (err, row) => {
     res.json(row);
   });
 });

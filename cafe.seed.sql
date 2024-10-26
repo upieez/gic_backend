@@ -1,18 +1,14 @@
-CREATE TABLE IF NOT EXISTS cafe (
-    id INTEGER PRIMARY KEY,
-    name TEXT NOT NULL,
-    description TEXT NOT NULL,
-    location TEXT NOT NULL,
-    logo BLOB
-);
+INSERT INTO cafe (id, name, description, location) VALUES
+('550e8400-e29b-41d4-a716-446655440000', 'Cafe Mocha', 'A cozy place for coffee lovers', '123 Coffee St.'),
+('550e8400-e29b-41d4-a716-446655440001', 'Java House', 'Best espresso in town', '456 Java Ave.'),
+('550e8400-e29b-41d4-a716-446655440002', 'Brewed Awakenings', 'Wake up with our fresh brews', '789 Brew Blvd.'),
+('550e8400-e29b-41d4-a716-446655440003', 'Cafe Latte', 'Delicious lattes and pastries', '101 Latte Ln.'),
+('550e8400-e29b-41d4-a716-446655440004', 'Espresso Express', 'Quick and tasty espresso', '202 Espresso Rd.');
 
-CREATE TABLE IF NOT EXISTS employee (
-    id VARCHAR(100) PRIMARY KEY,
-    name TEXT NOT NULL,
-    email_address TEXT NOT NULL,
-    phone_number TEXT NOT NULL,
-    gender TEXT CHECK( gender IN ('MALE', 'FEMALE') ) NOT NULL,
-    start_date TEXT NOT NULL,
-    cafe_id INTEGER NOT NULL,
-    FOREIGN KEY (cafe_id) REFERENCES cafe(id)
-);
+-- Seed data for employee table
+INSERT INTO employee (id, name, email_address, phone_number, gender, start_date, cafe_id) VALUES
+('UI12345678', 'John Doe', 'john.doe@example.com', '123-456-7890', 'male', '2023-01-01', '550e8400-e29b-41d4-a716-446655440000'),
+('UI23456789', 'Jane Smith', 'jane.smith@example.com', '234-567-8901', 'female', '2023-02-01', '550e8400-e29b-41d4-a716-446655440001'),
+('UI34567890', 'Alice Johnson', 'alice.johnson@example.com', '345-678-9012', 'female', '2023-03-01', '550e8400-e29b-41d4-a716-446655440002'),
+('UI45678901', 'Bob Brown', 'bob.brown@example.com', '456-789-0123', 'male', '2023-04-01', '550e8400-e29b-41d4-a716-446655440003'),
+('UI56789012', 'Charlie Davis', 'charlie.davis@example.com', '567-890-1234', 'male', '2023-05-01', '550e8400-e29b-41d4-a716-446655440004');
