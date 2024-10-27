@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const crypto = require("crypto");
+const { calculateDaysInCafe } = require("../utils");
 
 router.get("/cafes", function (req, res, next) {
   /** @type {(import("sqlite3").Database)} */
@@ -52,9 +53,34 @@ router.get("/employees", function (req, res, next) {
 
   const cafeQuery = req.query.cafe;
 
-  db.all("SELECT * FROM employee", cafeQuery, (err, row) => {
-    res.json(row);
-  });
+  // select all employee and the cafe that they belong in
+  db.all(
+    `
+    SELECT employee.*, cafe.name AS cafe_name
+    FROM employee
+    LEFT JOIN cafe ON employee.cafe_id = cafe.id
+  `,
+    (err, rows) => {
+      if (err) {
+        res.status(500).json({ error: err.message });
+        return;
+      }
+
+      const transformRows = rows.map((row) => ({
+        id: row.id,
+        name: row.name,
+        email: row.email_address,
+        phoneNumber: row.phone_number,
+        gender: row.gender,
+        startDate: row.start_date,
+        daysInCafe: calculateDaysInCafe(row.start_date),
+        cafeId: row.cafe_id,
+        cafeName: row.cafe_name,
+      }));
+
+      res.json(transformRows);
+    }
+  );
 });
 
 router.post("/cafe", function (req, res, next) {
