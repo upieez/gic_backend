@@ -47,13 +47,33 @@ router.get("/cafes", function (req, res, next) {
   );
 });
 
+router.get("/cafes/:id", function (req, res, next) {
+  /** @type {(import("sqlite3").Database)} */
+  const db = req.app.get("db");
+
+  const id = req.params.id;
+
+  db.get("SELECT * FROM cafe WHERE id = ?", [id], (err, row) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+
+    if (!row) {
+      res.status(404).json({ error: "Cafe not found" });
+      return;
+    }
+
+    res.json(row);
+  });
+});
+
 router.get("/employees", function (req, res, next) {
   /** @type {(import("sqlite3").Database)} */
   const db = req.app.get("db");
 
   const cafeQuery = req.query.cafe;
 
-  // select all employee and the cafe that they belong in
   db.all(
     `
     SELECT employee.*, cafe.name AS cafe_name
