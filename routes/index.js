@@ -8,9 +8,42 @@ router.get("/cafes", function (req, res, next) {
 
   const locationQuery = req.query.location;
 
-  db.all("SELECT * FROM cafe", locationQuery, (err, row) => {
-    res.json(row);
-  });
+  db.all(
+    `
+    SELECT cafe.*, employee.id AS employee_id, employee.name AS employee_name, employee.email_address 
+    FROM cafe 
+    LEFT JOIN employee ON cafe.id = employee.cafe_id
+  `,
+    (err, rows) => {
+      if (err) {
+        res.status(500).json({ error: err.message });
+        return;
+      }
+
+      const cafes = {};
+      rows.forEach((row) => {
+        if (!cafes[row.id]) {
+          cafes[row.id] = {
+            id: row.id,
+            name: row.name,
+            description: row.description,
+            location: row.location,
+            logo: row.logo,
+            employees: [],
+          };
+        }
+        if (row.employee_id) {
+          cafes[row.id].employees.push({
+            id: row.employee_id,
+            name: row.employee_name,
+            email_address: row.email_address,
+          });
+        }
+      });
+
+      res.json(Object.values(cafes));
+    }
+  );
 });
 
 router.get("/employees", function (req, res, next) {
