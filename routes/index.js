@@ -103,6 +103,36 @@ router.get("/employees", function (req, res, next) {
   );
 });
 
+router.get("/employees/:id", function (req, res, next) {
+  /** @type {(import("sqlite3").Database)} */
+  const db = req.app.get("db");
+
+  const id = req.params.id;
+
+  db.get("SELECT * FROM employee WHERE id = ?", [id], (err, row) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+
+    if (!row) {
+      res.status(404).json({ error: "Employee not found" });
+      return;
+    }
+
+    const formatEmployee = {
+      id: row.id,
+      name: row.name,
+      email: row.email_address,
+      phoneNumber: row.phone_number,
+      gender: row.gender,
+      cafeId: row.cafe_id,
+    };
+
+    res.json(formatEmployee);
+  });
+});
+
 router.post("/cafe", function (req, res, next) {
   /** @type {(import("sqlite3").Database)} */
   const db = req.app.get("db");
