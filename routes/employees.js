@@ -36,7 +36,7 @@ router.get("/", function (req, res, next) {
     }));
 
     const sortedRows = transformRows.sort(
-      (a, b) => b.daysWorked - a.daysWorked
+      (a, b) => b.daysInCafe - a.daysInCafe
     );
 
     res.json(sortedRows);
