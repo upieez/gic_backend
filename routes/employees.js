@@ -9,33 +9,38 @@ router.get("/", function (req, res, next) {
 
   const cafeQuery = req.query.cafe;
 
-  db.all(
-    `
+  const baseQuery = `
     SELECT employee.*, cafe.name AS cafe_name
     FROM employee
     LEFT JOIN cafe ON employee.cafe_id = cafe.id
-  `,
-    (err, rows) => {
-      if (err) {
-        res.status(500).json({ error: err.message });
-        return;
-      }
+  `;
 
-      const transformRows = rows.map((row) => ({
-        id: row.id,
-        name: row.name,
-        email: row.email_address,
-        phoneNumber: row.phone_number,
-        gender: row.gender,
-        startDate: row.start_date,
-        daysInCafe: calculateDaysInCafe(row.start_date),
-        cafeId: row.cafe_id,
-        cafeName: row.cafe_name,
-      }));
+  const finalQuery = cafeQuery ? `${baseQuery} WHERE cafe.name = ?` : baseQuery;
 
-      res.json(transformRows);
+  db.all(finalQuery, [cafeQuery], (err, rows) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
     }
-  );
+
+    const transformRows = rows.map((row) => ({
+      id: row.id,
+      name: row.name,
+      email: row.email_address,
+      phoneNumber: row.phone_number,
+      gender: row.gender,
+      startDate: row.start_date,
+      daysInCafe: calculateDaysInCafe(row.start_date),
+      cafeId: row.cafe_id,
+      cafeName: row.cafe_name,
+    }));
+
+    const sortedRows = transformRows.sort(
+      (a, b) => b.daysWorked - a.daysWorked
+    );
+
+    res.json(sortedRows);
+  });
 });
 
 router.get("/:id", function (req, res, next) {

@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const crypto = require("crypto");
-const { calculateDaysInCafe } = require("../utils");
 
 router.get("/", function (req, res, next) {
   /** @type {(import("sqlite3").Database)} */
