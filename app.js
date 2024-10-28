@@ -41,13 +41,15 @@ app.use(function (err, req, res, next) {
   res.send("error");
 });
 
+db.run("PRAGMA foreign_keys = ON");
+
 db.serialize(() => {
   db.run(
     "CREATE TABLE IF NOT EXISTS cafe (id TEXT PRIMARY KEY, name TEXT NOT NULL, description TEXT NOT NULL, location TEXT NOT NULL, logo BLOB)"
   );
 
   db.run(
-    "CREATE TABLE IF NOT EXISTS employee (id TEXT PRIMARY KEY, name TEXT NOT NULL, email_address TEXT NOT NULL, phone_number TEXT NOT NULL, gender TEXT NOT NULL, start_date TEXT NOT NULL, cafe_id INTEGER NOT NULL, FOREIGN KEY (cafe_id) REFERENCES cafe(id))"
+    "CREATE TABLE IF NOT EXISTS employee (id TEXT PRIMARY KEY, name TEXT NOT NULL, email_address TEXT NOT NULL, phone_number TEXT NOT NULL, gender TEXT NOT NULL, start_date TEXT NOT NULL, cafe_id INTEGER NOT NULL, FOREIGN KEY (cafe_id) REFERENCES cafe(id) ON DELETE CASCADE)"
   );
 });
 
