@@ -6,7 +6,8 @@ const logger = require("morgan");
 const sqlite3 = require("sqlite3").verbose();
 const cors = require("cors");
 
-const indexRouter = require("./routes/index");
+const cafeRouter = require("./routes/cafes");
+const employeeRouter = require("./routes/employees");
 
 const app = express();
 const db = new sqlite3.Database("cafe");
@@ -23,7 +24,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(cors());
 
-app.use("/", indexRouter);
+app.use("/cafes", cafeRouter);
+app.use("/employees", employeeRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
