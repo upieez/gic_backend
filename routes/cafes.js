@@ -7,44 +7,55 @@ router.get("/", function (req, res, next) {
   /** @type {(import("sqlite3").Database)} */
   const db = req.app.get("db");
 
-  const locationQuery = req.query.location;
+  const location = req.query.location;
 
-  db.all(
-    `
-    SELECT cafe.*, employee.id AS employee_id, employee.name AS employee_name, employee.email_address 
+  const baseQuery = `
+    SELECT cafe.*, 
+           employee.id AS employee_id, 
+           employee.name AS employee_name, 
+           employee.email_address,
+           (SELECT COUNT(*) FROM employee WHERE employee.cafe_id = cafe.id) AS employee_count
     FROM cafe 
     LEFT JOIN employee ON cafe.id = employee.cafe_id
-  `,
-    (err, rows) => {
-      if (err) {
-        res.status(500).json({ error: err.message });
-        return;
-      }
+  `;
 
-      const cafes = {};
-      rows.forEach((row) => {
-        if (!cafes[row.id]) {
-          cafes[row.id] = {
-            id: row.id,
-            name: row.name,
-            description: row.description,
-            location: row.location,
-            logo: row.logo,
-            employees: [],
-          };
-        }
-        if (row.employee_id) {
-          cafes[row.id].employees.push({
-            id: row.employee_id,
-            name: row.employee_name,
-            email_address: row.email_address,
-          });
-        }
-      });
+  const finalQuery = location
+    ? `${baseQuery} WHERE cafe.location = ? ORDER BY employee_count DESC`
+    : `${baseQuery} ORDER BY employee_count DESC`;
 
-      res.json(Object.values(cafes));
+  db.all(finalQuery, [location], (err, rows) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
     }
-  );
+
+    if (rows.length === 0) {
+      return res.json([]);
+    }
+
+    const cafes = {};
+    rows.forEach((row) => {
+      if (!cafes[row.id]) {
+        cafes[row.id] = {
+          id: row.id,
+          name: row.name,
+          description: row.description,
+          location: row.location,
+          logo: row.logo,
+          employees: [],
+        };
+      }
+      if (row.employee_id) {
+        cafes[row.id].employees.push({
+          id: row.employee_id,
+          name: row.employee_name,
+          email_address: row.email_address,
+        });
+      }
+    });
+
+    res.json(Object.values(cafes));
+  });
 });
 
 router.get("/:id", function (req, res, next) {
