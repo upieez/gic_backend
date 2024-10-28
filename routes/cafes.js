@@ -48,7 +48,8 @@ router.get("/", function (req, res, next) {
         cafes[row.id].employees.push({
           id: row.employee_id,
           name: row.employee_name,
-          email_address: row.email_address,
+          email: row.email_address,
+          cafeName: row.name,
         });
       }
     });
