@@ -201,12 +201,12 @@ router.put("/employee/:id", function (req, res, next) {
   /** @type {(import("sqlite3").Database)} */
   const db = req.app.get("db");
 
-  const { name, email_address, cafeId } = req.body;
+  const { name, email, phoneNumber, gender, cafeId } = req.body;
   const id = req.params.id;
 
   db.run(
-    "UPDATE employee SET name = ?, email_address = ?, cafe_id = ? WHERE id = ?",
-    [name, email_address, cafeId, id],
+    "UPDATE employee SET name = ?, email_address = ?, phone_number = ?, gender = ?, cafe_id = ? WHERE id = ?",
+    [name, email, phoneNumber, gender, cafeId, id],
     (err) => {
       if (err) {
         res.status(500).json({ error: err.message });
