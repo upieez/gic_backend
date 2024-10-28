@@ -1,6 +1,6 @@
 # Setup
 
-We are using Node.JS and Express to run our web server. 
+We are using Node.JS and Express to run our web server. We are also using SQLite as our database.
 
 Please ensure the following:
 
