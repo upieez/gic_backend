@@ -128,12 +128,13 @@ router.post("/employee", function (req, res, next) {
   /** @type {(import("sqlite3").Database)} */
   const db = req.app.get("db");
 
-  const { name, email_address, cafeId } = req.body;
-  const id = `UI ${crypto.randomBytes(4).toString("hex")}`;
+  const { name, email, phoneNumber, gender, cafeId } = req.body;
+  const startDate = new Date().toLocaleDateString();
+  const id = `UI${crypto.randomBytes(4).toString("hex")}`;
 
   db.run(
-    "INSERT INTO employee (id, name, email_address, cafe_id) VALUES (?, ?, ?, ?)",
-    [id, name, email_address, cafeId],
+    "INSERT INTO employee (id, name, email_address, phone_number, gender, start_date, cafe_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
+    [id, name, email, phoneNumber, gender, startDate, cafeId],
     (err) => {
       if (err) {
         res.status(500).json({ error: err.message });
